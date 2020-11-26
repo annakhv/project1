@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <link rel="stylesheet"  href="/static/book.css">
+    </head>
+    <body>
+      <header>
+        <p> <a href="{{ url_for('logout') }}">
+          log out 
+          </a>{{username}}</p>
+      </header>
+      <main>
+        <div class=flex-container>
+       <div>
+        <h2>Book details</h2>
+            <ul>
+                 
+              <li>
+                book isbn: {{thebook.isbn}}
+              </li>
+                <li>
+                  book title: {{thebook.title}}
+                </li>
+             <li>book author: {{thebook.author}}</li>
+             <li>book year: {{thebook.year}}</li>
+            </ul>
+          </div>
+          <div>
+            <h2>Book ranking</h2>
+         
+           this book has avarege score <h3>{{ score }} </h3> (out of 5) from  <h3>{{count }} </h3>user ratings on Goodreads 
+         
+          </div>
+          
+          <div>
+      
+          <form action="{{url_for('review')}}"  method="POST">
+             <label for="review"><h3>write a review for this book</h3></label><br>
+            <textarea id="review" name="review" rows="10" cols="50"></textarea><br><br>
+            <button>Submit</button>
+            </form>
+
+          
+          </div>
+
+          <div>
+            <h3>rate this book</h3><br><br>
+          <form action="{{url_for('rate')}}"  method="POST">
+            <input type="radio" id="one" name="rate" value=1>
+            <label for="one"> one </label><br>
+           
+            <input type="radio" id="two" name="rate" value=2>
+            <label for="two"> two </label><br>
+            
+            <input type="radio" id="three" name="rate" value=3>
+            <label for="three">three </label><br>
+          
+            <input type="radio" id="four" name="rate" value=4>
+            <label for="four"> four</label><br>
+                  
+             <input type="radio" id="five" name="rate" value=5>
+            <label for="five"> five </label><br><br>
+            <button id="button2">Submit </button>
+      
+        </form>
+      </div>
+    </div>
+  </main>
+    <section>
+      <div >
+      <h1>Reviews for this book</h1>
+      <ul>{%for common in listCommon %}</ul>
+            username <b>{{common[0]}} </b> rated this  book <b>{{common[2]}} </b> (out of 5) <br>
+            and commented:
+            <div class="comment">
+                <li> {{common[1]}}  </li> <br>
+              </div>   
+           {% endfor %} 
+      </div>    
+    <div>
+      <ul>{%for review in bookreviews %}</ul>
+               username <b>{{review.username}} </b>commented:
+            <div class="comment">
+               <li>{{review.review}} </li><br>
+            </div> 
+         {% endfor %} 
+        </div> 
+        <div >    
+             {%for rating in bookratings %}
+          username <b>{{rating.username}} </b>rated this  book <b>{{rating.rating}} </b>(out of 5) <br>
+         
+       
+         {% endfor %} 
+        </div>     
+        </section>
+ 
+   
+      
+        <footer>
+
+        </footer>
+      
+    </body>
+</html>

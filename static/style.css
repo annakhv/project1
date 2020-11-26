@@ -1,0 +1,45 @@
+header, footer{
+    height: 10%;
+    background-color:rgb(238, 148, 113);
+    padding: 20px;
+    text-align: center;
+}
+
+main{
+    height:70%;
+    background-color: rgb(226, 223, 184);
+    padding: 60px;
+    text-align: center;
+}
+ 
+
+
+button{
+    padding:5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color:ghostwhite;
+    border-radius: 5px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+
+}
+button:hover{
+    color:burlywood;
+    background-color: lightyellow;
+}
+
+ .signup div{
+     display: none;
+     cursor: pointer;
+
+}
+
+.signup div:target{
+    display: block;
+}
+
+a {
+    color:black;
+    font-size: larger;
+
+}

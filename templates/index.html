@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet"  href="/static/style.css">
+   
+</head>
+<body>
+<header>
+   <h1>Book review web page</h1>
+</header>
+<main>
+    
+
+      
+         <div class="signup">
+            <a href='#signup'>Sign up </a>  
+
+ 
+   
+    <div id="signup" ><br><br>
+       
+        <form action="{{url_for('register')}}"  method="POST">
+            <label for="Username">Username</label><br>
+            <input type="text" id="Username" name="Username"><br><br>
+            <label for="Firstname">Firstname</label><br>
+            <input type="text" id="Firstname" name="Firstname"><br><br>
+            <label for="Lastname">Lastname</label><br>
+            <input type="text" id="Lastname" name="Lastname"><br><br>
+            <label for="Password">Password</label><br>
+            <input type="password" id="Password" name="Password"><br><br>
+            <button>Register</button>
+        </form>    
+           
+    </div>
+</div>
+    <h2>Login Details</h2>
+    <form action="{{url_for('login')}}"  method="POST">
+        <label for="username">Username</label><br>
+        <input type="text" id="Username" name="Username"><br><br>
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="Password"><br><br>
+        <button>Submit</button>
+   
+    </form>
+</main>
+<footer>
+<h1>Outside of a dog, a book is a man's best friend.</h1>
+</footer>
+</body>
+</html>

@@ -10,7 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 app = Flask(__name__)
-
+app.config['JSON_SORT_KEYS'] = False
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
@@ -65,15 +65,16 @@ def login():
     else:
        Username = request.form.get("Username") 
        passw = request.form.get("Password") 
-      
+      # look for the usernames with the referred password
        usernames = db.execute("SELECT  username FROM users WHERE passw=:passw",{"passw":passw}).fetchall()
      
        if len(usernames) == 0:
            return render_template("incorrectlogin.html", Username=Username)
        else:
+           #this is check see whether for given password username also matches
             for name  in usernames:
               
-                if name[0]  == Username:
+                if name.username  == Username:
 
                     session["user"]= Username
                     return render_template("login.html", Username=Username)
@@ -84,7 +85,6 @@ def login():
 def logout(): 
    
     username=session.pop("user")
-    print(username)
     return redirect(url_for('home'))
 
 
@@ -111,11 +111,12 @@ def book(book_title):
     if thebook is None:
         return render_template("error.html", message="no such book found")
     else:
-        session["isbn"]=thebook.isbn
-        username= session.get("user")
+      
+        session["isbn"]=thebook.isbn   # need this data for writing reviews( in review route)
+        username= session.get("user") # to find data about already made reviews and ratings 
         bookreviews=db.execute("SELECT review,  username  FROM reviews  JOIN users  ON users.id=reviews.user_id WHERE book_ibsn=:book_ibsn ",{"book_ibsn":thebook.isbn} ).fetchall()
         bookratings=db.execute(" SELECT  rating , username FROM  ratings JOIN users ON users.id=ratings.rating_user_id WHERE rating_book_ibsn=:rating_book_ibsn ",{"rating_book_ibsn":thebook.isbn} ).fetchall() 
-        listCommon, bookreviews, bookratings = findCommon(bookreviews,bookratings)
+        listCommon, bookreviews, bookratings = findCommon(bookreviews,bookratings) #needed this to seperate out so that we can distinguish some users who made only reviews or ratings from those who made both
         dataDictionary=readjason(thebook.isbn)
         score=dataDictionary.get('average_rating')
         count=dataDictionary.get('work_ratings_count')
@@ -165,7 +166,7 @@ def backhome():
 
 @app.route("/api/<isbn>", methods=[ "GET"])
 def api(isbn):
-    print("hello world")
+   
     data=db.execute("SELECT * FROM books WHERE  isbn=:isbn",{"isbn": isbn}).fetchone()
     reviewcount=db.execute("SELECT review from reviews WHERE book_ibsn=:book_ibsn", {"book_ibsn":isbn}).rowcount
     allscores=db.execute("SELECT rating from ratings WHERE rating_book_ibsn=:rating_book_ibsn", {"rating_book_ibsn":isbn}).fetchall()
@@ -175,8 +176,9 @@ def api(isbn):
     count=0   
     for each in allscores:
         count+=each.rating
+    #averege is calculated by ratings obtained from goodreads and from users registered on this page
     averege=(countGodreads*float(scoreGodreads)+count)/(countGodreads+len(allscores))
-    print(averege)
+   
  
     return jsonify({
                 "title":data.title,

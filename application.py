@@ -71,7 +71,7 @@ def login():
        if len(usernames) == 0:
            return render_template("incorrectlogin.html", Username=Username)
        else:
-           #this is check see whether for given password username also matches
+           #this is to check  whether for given password username also matches
             for name  in usernames:
               
                 if name.username  == Username:

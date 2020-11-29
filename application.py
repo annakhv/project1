@@ -7,7 +7,7 @@ import requests
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
+import copy
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -116,6 +116,8 @@ def book(book_title):
         username= session.get("user") # to find data about already made reviews and ratings 
         bookreviews=db.execute("SELECT review,  username  FROM reviews  JOIN users  ON users.id=reviews.user_id WHERE book_ibsn=:book_ibsn ",{"book_ibsn":thebook.isbn} ).fetchall()
         bookratings=db.execute(" SELECT  rating , username FROM  ratings JOIN users ON users.id=ratings.rating_user_id WHERE rating_book_ibsn=:rating_book_ibsn ",{"rating_book_ibsn":thebook.isbn} ).fetchall() 
+        print(bookreviews)
+        print(bookratings)
         listCommon, bookreviews, bookratings = findCommon(bookreviews,bookratings) #needed this to seperate out so that we can distinguish some users who made only reviews or ratings from those who made both
         dataDictionary=readjason(thebook.isbn)
         score=dataDictionary.get('average_rating')
@@ -201,16 +203,21 @@ def readjason(isbn):
         return dataDictionary
 
 def   findCommon(bookreviews,bookratings):
+        copybookreviews=copy.deepcopy(bookreviews) #to avoid aliasing
+        copybookratings=copy.deepcopy(bookratings)
         listCommon =[]
         if len(bookreviews) and len(bookratings) > 0:
             for data in bookreviews:
                 for moredata in bookratings:
+                   
                     if data.username == moredata.username:
+                      
                        name=data.username
                        rev=data.review
                        rat=moredata.rating
                        mytuple=(name, rev, rat )
                        listCommon.append(mytuple)
-                       bookreviews.remove(data)
-                       bookratings.remove(moredata)
-        return listCommon, bookreviews, bookratings
+                       copybookreviews.remove(data) #delete data from here and not from original list to not mess up numbering order in loop
+                       copybookratings.remove(moredata) # same here as above
+                    
+        return listCommon, copybookreviews, copybookratings
